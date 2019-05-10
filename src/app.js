@@ -5,7 +5,7 @@ const cors = require('cors');
 const helemt = require('helmet');
 const { NODE_ENV } = require('./config');
 const logger = require('./logger');
-const bookmarks = require('./bookmarks/addBookmark');
+const bookmarks = require('./bookmarks/bookmark');
 
 const app = express();
 

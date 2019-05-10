@@ -4,12 +4,12 @@ const logger = require('../logger');
 const bookmarkRouter = express.Router();
 const bodyParse = express.json();
 
-const { bookmarks } = require('../store');
+const bookmarks = require('../store');
 
 bookmarkRouter
 	.route('/bookmarks')
 	.get((req, res) => {
-		res.json(bookmarks);
+		res.status(200).json(bookmarks);
 	})
 	.post(bodyParse, (req, res) => {
 		const { title, url, description, rating } = req.body;
@@ -32,7 +32,9 @@ bookmarkRouter
 			description,
 			rating
 		};
+
 		bookmarks.push(bookmark);
+
 		logger.info(`Bookmark with id ${id} created`);
 		res
 			.status(201)
@@ -61,13 +63,13 @@ bookmarkRouter
 		}
 
 		bookmarks.forEach(bookmark => {
-			const bmId = bookmark.filter(bm => bm.id !== id);
+			const bmId = bookmarks.filter(bm => bm.id !== id);
 			bookmark.id = bmId;
 		});
 
 		bookmarks.splice(bookmarkIndex, 1);
 		logger.info(`Bookmark with id ${id} deleted`);
-		res.send.status(204).end();
+		res.status(204).end();
 	});
 
 module.exports = bookmarkRouter;
