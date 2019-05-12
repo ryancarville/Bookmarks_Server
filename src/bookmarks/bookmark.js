@@ -62,12 +62,10 @@ bookmarkRouter
 			return res.status(404).send('Bookmark not found');
 		}
 
-		bookmarks.forEach(bookmark => {
-			const bmId = bookmarks.filter(bm => bm.id !== id);
-			bookmark.id = bmId;
-		});
+		const bmId = bookmarks.filter(bm => bm.id === id);
+		const bookmark = bmId;
 
-		bookmarks.splice(bookmarkIndex, 1);
+		bookmarks.splice(bookmark, 1);
 		logger.info(`Bookmark with id ${id} deleted`);
 		res.status(204).end();
 	});
