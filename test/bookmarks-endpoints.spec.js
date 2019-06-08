@@ -29,10 +29,15 @@ describe.only('Bookmarks endpoints', () => {
 	});
 
 	describe('GET /bookmarks', () => {
-		context('Given database has bookmarks', () => {
+		context('Given database is empty', () => {
 			it('response with 200 and empty []', () => {
+				const apiKey = 'Bearer ' + process.env.API_TOKEN;
+				const options = {
+					header: { Authorization: apiKey }
+				};
 				return supertest(app)
 					.get('/bookmarks')
+					.auth(options)
 					.expect(200, []);
 			});
 		});

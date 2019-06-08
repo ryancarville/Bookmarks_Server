@@ -15,7 +15,7 @@ const BookmarkServices = {
 		return knex
 			.from('bookmarks')
 			.select('*')
-			.whre('id', id)
+			.where('id', id)
 			.first();
 	}
 };
