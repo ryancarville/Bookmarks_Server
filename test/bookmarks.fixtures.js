@@ -31,4 +31,22 @@ function makeBookmarksArray() {
 	];
 }
 
-module.exports = { makeBookmarksArray };
+function makeMaliciousBookmark() {
+	const maliciousBookmark = {
+		id: 666,
+		title: 'I am a malicious bookmark <script>alert("xss");</script>',
+		url: 'https://www.not.a.real.link/used-to-xss',
+		description: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
+		rating: 5
+	};
+
+	const expectedBookmark = {
+		...maliciousBookmark,
+		title:
+			'I am a malicious bookmark &lt;script&gt;alert("xss");&lt;/script&gt;',
+		description: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`
+	};
+	return { maliciousBookmark, expectedBookmark };
+}
+
+module.exports = { makeBookmarksArray, makeMaliciousBookmark };

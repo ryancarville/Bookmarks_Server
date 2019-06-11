@@ -17,6 +17,11 @@ const BookmarkServices = {
 			.select('*')
 			.where('id', id)
 			.first();
+	},
+	deleteBookmark(knex, id) {
+		return knex('bookmarks')
+			.where({ id })
+			.delete();
 	}
 };
 
