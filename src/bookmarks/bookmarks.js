@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const logger = require('../logger');
 const bookmarkRouter = express.Router();
@@ -15,7 +16,7 @@ const sterializeBookmark = bookmark => ({
 });
 
 bookmarkRouter
-	.route('/bookmarks')
+	.route('/')
 	.get((req, res, next) => {
 		const knexInstance = req.app.get('db');
 		console.log(knexInstance);
@@ -39,20 +40,19 @@ bookmarkRouter
 			.then(bookmark => {
 				res
 					.status(201)
-					.location(`/bookmarks/${bookmark.id}`)
+					.location(path.posix.join(req.originalUrl + `/${bookmark.id}`))
 					.json(sterializeBookmark(bookmark));
 			})
 			.catch(next);
 	});
 
 bookmarkRouter
-	.route('/bookmarks/:bookmark_id')
+	.route('/:bookmark_id')
 	.all((req, res, next) => {
 		const knexInstance = req.app.get('db');
 		BookmarkServices.getBookmarkById(knexInstance, req.params.bookmark_id)
 			.then(bookmark => {
 				if (!bookmark) {
-					logger.error('Bookmark with id ${id} not found.');
 					return res
 						.status(404)
 						.json({ error: { message: `Bookmark doesn't exist` } });
@@ -68,6 +68,29 @@ bookmarkRouter
 		BookmarkServices.deleteBookmark(req.app.get('db'), req.params.bookmark_id)
 			.then(numRowsAffected => {
 				res.status(200).end();
+			})
+			.catch(next);
+	})
+	.patch(jsonParser, (req, res, next) => {
+		const { title, url, description, rating } = req.body;
+		const updatedBookmark = { title, url, description, rating };
+
+		const numberOfValues = Object.values(updatedBookmark).filter(Boolean)
+			.length;
+		if (numberOfValues === 0) {
+			return res.status(400).json({
+				error: {
+					message: `Request body must contain 'title', 'url', 'description' or 'rating'`
+				}
+			});
+		}
+		BookmarkServices.updateBookmark(
+			req.app.get('db'),
+			req.params.bookmark_id,
+			updatedBookmark
+		)
+			.then(numRowsAffected => {
+				res.status(204).end();
 			})
 			.catch(next);
 	});

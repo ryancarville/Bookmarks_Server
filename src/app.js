@@ -5,7 +5,7 @@ const cors = require('cors');
 const helemt = require('helmet');
 const { NODE_ENV } = require('./config');
 const logger = require('./logger');
-const bookmarks = require('./bookmarks/bookmark');
+const bookmarks = require('./bookmarks/bookmarks');
 
 const app = express();
 
@@ -25,7 +25,7 @@ app.use(function validateBearerToken(req, res, next) {
 	next();
 });
 
-app.use(bookmarks);
+app.use('/api/bookmarks', bookmarks);
 
 app.get('/', (req, res) => {
 	res.send('Hello, boilerplate!');
